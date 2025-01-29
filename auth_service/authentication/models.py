@@ -1,3 +1,39 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# Create your models here.
+
+NULLABLE = {"blank": True, "null": True}
+
+
+class User(AbstractUser):
+    username = None
+    email = models.EmailField(verbose_name="email", **NULLABLE)
+    phone = models.CharField(
+        unique=True,
+        max_length=11,
+        verbose_name="Номер телефона",
+        help_text="Введите номер телефона",
+    )
+    city = models.CharField(
+        max_length=100, verbose_name="Город", **NULLABLE, help_text="Введите город"
+    )
+    sms = models.CharField(
+        max_length=6, verbose_name="смс-код", **NULLABLE
+    )
+    invite_code = models.CharField(max_length=6, verbose_name="Инвайт-код", **NULLABLE)
+    invite_input = models.CharField(
+        max_length=10,
+        verbose_name="Инвайт-код",
+        **NULLABLE,
+        help_text="Введите инвайт-код"
+    )
+
+    USERNAME_FIELD = "phone"
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return self.email
