@@ -1,4 +1,5 @@
 from rest_framework.exceptions import ValidationError
+from auth_service.authentication.models import User
 
 
 class PhoneValidator:
@@ -17,3 +18,25 @@ class PhoneValidator:
 def phone_validator(phone_number):
     if phone_number[0:2] != "79" or not phone_number.isdigit() or len(phone_number) != 11:
         raise ValidationError("Введите номер в формате 79XXXXXXXX")
+
+
+class InviteInputValidator:
+
+    def __init__(self, invite_input, phone):
+        self.invite_input = invite_input
+        self.users = User.objects.all()
+        self.phone = phone
+
+    def __call__(self, value):
+        invite_code_input = dict(value).get(self.invite_input)
+        user_phone = dict(value).get(self.phone)
+        user = self.users.filter(phone=user_phone).first()
+        if user.invite_input:
+            if invite_code_input:
+                raise ValidationError("Пригласительный код уже использован")
+        else:
+            if invite_code_input:
+                if user.invite_code == invite_code_input:
+                    raise ValidationError("Нельзя использовать Ваш собственный пригласительный код")
+                elif not self.users.filter(invite_code=invite_code_input).exists():
+                    raise ValidationError("Пригласительный код не найден")
