@@ -3,6 +3,7 @@ from auth_service.authentication.models import User
 
 
 class PhoneValidator:
+    """Проверят корректность ввода номера"""
 
     def __init__(self, phone):
 
@@ -21,6 +22,7 @@ def phone_validator(phone_number):
 
 
 class InviteInputValidator:
+    """Проверят корректность ввода инвайт кода"""
 
     def __init__(self, invite_input, phone):
         self.invite_input = invite_input
