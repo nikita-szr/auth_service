@@ -1,24 +1,30 @@
 import random
+import string
 
 from auth_service.authentication.models import User
 
 
-def create_invite_code():
-    str_list = []
-    for i in range(97, 123):
-        str_list.append(chr(i))
-    for i in range(65, 91):
-        str_list.append(chr(i))
-    for i in range(1, 10):
-        str_list.append(str(i))
-    while True:
-        invite_code = ""
-        for i in range(10):
-            invite_code += str_list[random.randint(0, len(str_list) - 1)]
-        if (
-            any(i.isupper() for i in invite_code) and any(i.islower() for i in invite_code)
-                and sum(i.isdigit() for i in invite_code) >= 3
-                and invite_code not in [user.invite_code for user in User.objects.all()]
-        ):
-            break
-    return invite_code
+class InviteCodeGenerator:
+    """Генератор инвайт-кодов с валидацией"""
+
+    def __init__(self, length=10, min_digits=3):
+        self.length = length
+        self.min_digits = min_digits
+        self.characters = string.ascii_letters + string.digits
+
+    def generate(self):
+        """Генерирует новый инвайт-код"""
+        while True:
+            invite_code = ''.join(random.choices(self.characters, k=self.length))
+
+            if self.is_valid(invite_code):
+                return invite_code
+
+    def is_valid(self, invite_code):
+        """Проверяет, соответствует ли код требованиям"""
+        return (
+            any(c.isupper() for c in invite_code) and
+            any(c.islower() for c in invite_code) and
+            sum(c.isdigit() for c in invite_code) >= self.min_digits and
+            not User.objects.filter(invite_code=invite_code).exists()
+        )
