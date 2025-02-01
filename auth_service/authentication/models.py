@@ -20,7 +20,7 @@ class User(AbstractUser):
     sms = models.CharField(
         max_length=6, verbose_name="смс-код", **NULLABLE
     )
-    invite_code = models.CharField(max_length=6, verbose_name="Инвайт-код", **NULLABLE)
+    invite_code = models.CharField(max_length=10, verbose_name="Инвайт-код", **NULLABLE)
     invite_input = models.CharField(
         max_length=10,
         verbose_name="Инвайт-код",
