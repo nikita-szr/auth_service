@@ -64,9 +64,9 @@ class UserCreateView(CreateView):
     def form_invalid(self, form, *args, **kwargs):
         user = User.objects.get(phone=form.data.get("phone"))
         if user.phone == "79321225043":
-            password = "1111"
+            password = "111111"
         else:
-            password = random.randint(1000, 9999)
+            password = random.randint(100000, 999999)
         user.set_password(str(password))
         user.save()
         messages.success(self.request, "Отправили код в смс!")
