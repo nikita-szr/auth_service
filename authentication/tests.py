@@ -15,9 +15,9 @@ class UserTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create(
             phone="79000000000",
-            invite_code="12Hk1p",
-            email="dan@ya.ru",
-            city="Kurchatov",
+            invite_code="90ty7U",
+            email="nikita@gmail.com",
+            city="Samara",
             is_superuser=True,
             is_staff=True,
         )
@@ -26,12 +26,12 @@ class UserTest(APITestCase):
         )
 
     def test_user_create(self):
-        url = reverse("users:login")
+        url = reverse("authentication:login")
         data = {
             "phone": "79000000002",
-            "invite_code": "CJ56781",
+            "invite_code": "CK06781",
             "city": "Samara",
-            "email": "nikita@gmail.com",
+            "email": "nikita1@gmail.com",
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -50,13 +50,13 @@ class UserTest(APITestCase):
     def test_create_invite_code(self):
         """Тест генерации кода авторизации"""
         code = InviteCodeGenerator().generate()
-        self.assertTrue(len(code) == 6)
+        self.assertTrue(len(code) == 10)
         self.assertFalse(code.isdigit())
 
     def test_user_delete(self):
         """Тест удаления пользователя"""
         self.client.force_authenticate(user=self.user)
-        url = reverse("users:user_delete", args=(self.user1.pk,))
+        url = reverse("authentication:user_delete", args=(self.user1.pk,))
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(User.objects.all().count(), 1)
@@ -64,7 +64,7 @@ class UserTest(APITestCase):
     def test_user_list(self):
         """Тест списка пользователей"""
         self.client.force_authenticate(user=self.user)
-        url = reverse("users:user_list")
+        url = reverse("authentication:user_list")
         response = self.client.get(url)
         data = response.json()
         result = [
@@ -92,7 +92,7 @@ class UserTest(APITestCase):
 
 
 class UserConfirmEmailCode(APITestCase):
-    url = reverse('users:confirm')
+    url = reverse('authentication:confirm')
     phone_number = '79277771079'
     sms_code = str(random.randint(1000, 9999))
 
