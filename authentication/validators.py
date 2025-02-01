@@ -1,5 +1,5 @@
 from rest_framework.exceptions import ValidationError
-from auth_service.authentication.models import User
+from authentication.models import User
 
 
 class PhoneValidator:

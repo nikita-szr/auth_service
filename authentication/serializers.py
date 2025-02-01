@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from auth_service.authentication.models import User
-from auth_service.authentication.validators import InviteInputValidator, PhoneValidator
+from authentication.models import User
+from authentication.validators import InviteInputValidator, PhoneValidator
 
 
 class UserSerializer(ModelSerializer):

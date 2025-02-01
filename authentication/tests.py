@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.exceptions import ErrorDetail
 
-from auth_service.authentication.models import User
-from auth_service.authentication.services import InviteCodeGenerator
+from authentication.models import User
+from authentication.services import InviteCodeGenerator
 
 import random
 

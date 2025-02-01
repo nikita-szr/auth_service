@@ -8,10 +8,10 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.validators import UniqueValidator
 
-from auth_service.authentication.permissions import IsSelfUser
-from auth_service.authentication.serializers import UserSerializer, ProfileSerializer, UserConfirmSerializer, UserUpdateSerializer
-from auth_service.authentication.models import User
-from auth_service.authentication.services import InviteCodeGenerator
+from authentication.permissions import IsSelfUser
+from authentication.serializers import UserSerializer, ProfileSerializer, UserConfirmSerializer, UserUpdateSerializer
+from authentication.models import User
+from authentication.services import InviteCodeGenerator
 
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError

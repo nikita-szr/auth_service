@@ -1,6 +1,6 @@
 from django.urls import path
 
-from auth_service.authentication.views import (
+from authentication.views import (
     UserRegisterAPIView,
     UserConfirmAPIView,
     UserUpdateAPIView,

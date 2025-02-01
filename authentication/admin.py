@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from auth_service.authentication.models import User
+from authentication.models import User
 
 
 @admin.register(User)

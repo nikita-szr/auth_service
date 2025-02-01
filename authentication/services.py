@@ -1,7 +1,7 @@
 import random
 import string
 
-from auth_service.authentication.models import User
+from authentication.models import User
 
 
 class InviteCodeGenerator:
