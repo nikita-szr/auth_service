@@ -9,7 +9,7 @@ class UserRegisterForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ("phone",)
+        fields = ("phone", "invite_input")
 
     def clean_phone(self):
         cleaned_data = self.cleaned_data.get("phone")
@@ -23,6 +23,16 @@ class UserRegisterForm(ModelForm):
             raise ValidationError("Введите номер в формате 79XXXXXXXXX")
 
         return cleaned_data
+
+    def clean_invite_input(self):
+        invite_input = self.cleaned_data.get("invite_input")
+
+        if invite_input:
+            inviter = User.objects.filter(invite_code=invite_input).first()
+            if not inviter:
+                raise ValidationError("Неверный инвайт-код.")
+
+        return invite_input
 
 
 class SmsCodeForm(Form):
