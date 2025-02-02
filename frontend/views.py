@@ -23,7 +23,7 @@ from frontend.forms import UserRegisterForm, SmsCodeForm, UserUpdateForm
 class HomeView(TemplateView):
     """Контроллер главной страницы сайта"""
 
-    template_name = "frontend/index.html"
+    template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -37,7 +37,7 @@ class HomeView(TemplateView):
 class UserCreateView(CreateView):
     """Регистрация пользователя + отправка СМС-кода"""
 
-    template_name = "frontend/register.html"
+    template_name = "register.html"
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy("frontend:login")
@@ -47,8 +47,11 @@ class UserCreateView(CreateView):
 
     def form_valid(self, form, *args, **kwargs):
         return_data = {}
+        phone = form.cleaned_data.get("phone")
 
-        form.is_valid()
+        if User.objects.filter(phone=phone).exists():
+            form.add_error("phone", "Этот номер уже зарегистрирован. Войдите в систему.")
+            return self.form_invalid(form)
         user = form.save()
         user.invite_code = InviteCodeGenerator().generate()
         return_data["invite_code"] = user.invite_code
@@ -62,18 +65,8 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form, *args, **kwargs):
-        user = User.objects.get(phone=form.data.get("phone"))
-        if user.phone == "79321225043":
-            password = "111111"
-        else:
-            password = random.randint(100000, 999999)
-        user.set_password(str(password))
-        user.save()
-        messages.success(self.request, "Отправили код в смс!")
-        self.object = user
-        time.sleep(3)
-        print(password)
-        return redirect(self.get_success_url())
+        """Показываем форму регистрации с ошибками, если данные некорректны"""
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class SmsCodeView(View):
@@ -91,14 +84,14 @@ class SmsCodeView(View):
 
     def get(self, *args, **kwargs):
         form = SmsCodeForm()
-        return render(self.request, "frontend/sms_code.html", {"form": form})
+        return render(self.request, "sms_code.html", {"form": form})
 
 
 class UserDetailView(DetailView):
     """Отображение профиля пользователя"""
 
     model = User
-    template_name = "frontend/user_detail.html"
+    template_name = "user_detail.html"
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -118,7 +111,7 @@ class UserUpdateView(UpdateView):
     """Обновление данных пользователя"""
 
     model = User
-    template_name = "frontend/user_form.html"
+    template_name = "user_form.html"
     form_class = UserUpdateForm
     success_url = reverse_lazy("frontend:user_detail")
 
@@ -134,4 +127,32 @@ class UserUpdateView(UpdateView):
 class UserListView(ListView, LoginRequiredMixin):
     """Список пользователей (только для авторизованных)"""
     model = User
-    template_name = "frontend/user_list.html"
+    template_name = "user_list.html"
+
+
+class PhoneLoginView(View):
+    """Вход по номеру телефона (отправка SMS-кода)"""
+
+    template_name = "login.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        phone = request.POST.get("phone")
+
+        try:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            messages.error(request, "Номер не найден. Пройдите регистрацию.")
+            return render(request, self.template_name, {"error_message": "Номер не найден. Пройдите регистрацию."})
+
+        # Генерация кода
+        otp = random.randint(100000, 999999)
+        user.set_password(str(otp))
+        user.save()
+
+        print(f"Отправлен код для {phone}: {otp}")
+
+        messages.success(request, "SMS-код отправлен!")
+        return redirect(f"{reverse_lazy('frontend:sms_code')}?phone={phone}")
