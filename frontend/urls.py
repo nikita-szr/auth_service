@@ -1,6 +1,6 @@
 from django.urls import path
 
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, LoginView
 
 from frontend.views import (
     UserCreateView,
@@ -9,6 +9,7 @@ from frontend.views import (
     UserUpdateView,
     HomeView,
     UserListView,
+    PhoneLoginView
 )
 
 app_name = "frontend"
@@ -16,7 +17,8 @@ app_name = "frontend"
 urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="frontend:index"), name="logout"),
     path("", HomeView.as_view(), name="index"),
-    path("login/", UserCreateView.as_view(), name="login"),
+    path("login/", PhoneLoginView.as_view(), name="login"),
+    path("register/", UserCreateView.as_view(), name="register"),
     path("sms_code/", SmsCodeView.as_view(), name="sms_code"),
     path("user_detail/", UserDetailView.as_view(), name="user_detail"),
     path("user_update/", UserUpdateView.as_view(), name="user_update"),

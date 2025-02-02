@@ -40,7 +40,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("authentication.urls", namespace="authentication")),
-    # path("", include("frontend.urls", namespace="interface")),
+    path("", include("frontend.urls", namespace="frontend")),
     path(
         "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
     ),
