@@ -1,6 +1,6 @@
 from django.urls import path
 
-from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.auth.views import LogoutView
 
 from frontend.views import (
     UserCreateView,
