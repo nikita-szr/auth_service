@@ -22,3 +22,5 @@ class Command(BaseCommand):
         user.save()
 
         self.stdout.write(self.style.SUCCESS(f"Суперпользователь {phone} успешно создан"))
+
+# python manage.py create_superuser +79991112233 my_password
