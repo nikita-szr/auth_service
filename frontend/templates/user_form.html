@@ -13,13 +13,26 @@
                     <div class="card">
                         <div class="card-body">
                             {% csrf_token %}
-                            {{ form.as_p }}
+
+                            {% for field in form %}
+                                {% if field.name != "password" and field.name != "password1" and field.name != "password2" %}
+                                    <div class="mb-3">
+                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="text-danger">
+                                                {{ field.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
                             <button type="submit" class="btn btn-success">
                                 Сохранить
                             </button>
                             <a class="btn btn-outline-secondary" href="{% url 'frontend:user_detail' %}"
                                role="button">Назад</a>
-
                         </div>
                     </div>
                 </div>
